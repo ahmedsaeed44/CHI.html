@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding the Problem</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      border: 3px solid #005EB8;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0, 94, 184, 0.1);
+      animation: fadeInDown 0.6s ease-out;
+    }
+
+    .header-icon {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 20px;
+      stroke: #005EB8;
+      animation: rotate 3s ease-in-out infinite;
+    }
+
+    @keyframes rotate {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: #6c757d;
+      font-size: 1.1rem;
+    }
+
+    /* Phase Sections */
+    .phase {
+      margin-bottom: 50px;
+      animation: fadeInUp 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .phase:nth-child(2) { animation-delay: 0.2s; }
+    .phase:nth-child(3) { animation-delay: 0.4s; }
+    .phase:nth-child(4) { animation-delay: 0.6s; }
+
+    .phase-header {
+      color: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .phase-header:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .phase-1 .phase-header { background: linear-gradient(135deg, #005EB8 0%, #0077d4 100%); }
+    .phase-2 .phase-header { background: linear-gradient(135deg, #6c757d 0%, #868e96 100%); }
+    .phase-3 .phase-header { background: linear-gradient(135deg, #40C1AC 0%, #5cd4c0 100%); }
+
+    .phase-number {
+      background: rgba(255, 255, 255, 0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .phase-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Discovery Items */
+    .discovery-items {
+      display: grid;
+      gap: 20px;
+    }
+
+    .discovery-item {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      background: #f8f9fa;
+      border-left: 4px solid #005EB8;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .discovery-item:hover {
+      transform: translateX(10px);
+      box-shadow: 0 4px 15px rgba(0, 94, 184, 0.15);
+      background: #fff;
+    }
+
+    .discovery-icon {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      background: linear-gradient(135deg, #005EB8 0%, #0077d4 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      stroke: white;
+      transition: transform 0.3s ease;
+    }
+
+    .discovery-icon svg {
+      stroke: white;
+    }
+
+    .discovery-item:hover .discovery-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .discovery-text h3 {
+      color: #2c3e50;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .discovery-text p {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Insights Cards */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .insight-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      border: 2px solid #e9ecef;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #005EB8, #40C1AC);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .insight-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .insight-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      border-color: #005EB8;
+    }
+
+    .insight-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+    }
+
+    .insight-card:hover .insight-icon-wrapper {
+      background: linear-gradient(135deg, #005EB8 0%, #40C1AC 100%);
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .insight-icon {
+      width: 40px;
+      height: 40px;
+      stroke: #005EB8;
+      transition: stroke 0.4s ease;
+    }
+
+    .insight-card:hover .insight-icon {
+      stroke: white;
+    }
+
+    .insight-card h3 {
+      color: #2c3e50;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .insight-card p {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Research Methods */
+    .methods-list {
+      display: grid;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .method-item {
+      display: flex;
+      gap: 20px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .method-item:hover {
+      background: white;
+      border-color: #40C1AC;
+      transform: translateX(10px);
+      box-shadow: 0 4px 15px rgba(64, 193, 172, 0.15);
+    }
+
+    .method-number {
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      background: linear-gradient(135deg, #40C1AC 0%, #5cd4c0 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    .method-item:hover .method-number {
+      transform: scale(1.15) rotate(360deg);
+    }
+
+    .method-icon {
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      stroke: #40C1AC;
+      transition: all 0.3s ease;
+    }
+
+    .method-item:hover .method-icon {
+      stroke: #005EB8;
+      transform: scale(1.1);
+    }
+
+    .method-text h3 {
+      color: #2c3e50;
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .method-text p {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Arrow Connector */
+    .arrow-connector {
+      text-align: center;
+      margin: 30px 0;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .arrow-connector svg {
+      width: 40px;
+      height: 40px;
+      stroke: #6c757d;
+      opacity: 0.6;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.8rem; }
+      .phase-header { font-size: 1.2rem; }
+      .insights-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <h1>Understanding the Problem (The How)</h1>
+      <p>Systematic research process combining stakeholder insights with user feedback</p>
+    </div>
+
+    <!-- Phase 1: Discovery -->
+    <div class="phase phase-1">
+      <div class="phase-header">
+        <div class="phase-number">1</div>
+        <span>Discovery Phase: Stakeholder Engagement</span>
+      </div>
+      <div class="phase-content">
+        <div class="discovery-items">
+          <div class="discovery-item">
+            <div class="discovery-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <div class="discovery-text">
+              <h3>Stakeholder Meetings</h3>
+              <p>Conducted sessions with project managers and department heads</p>
+            </div>
+          </div>
+
+          <div class="discovery-item">
+            <div class="discovery-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div class="discovery-text">
+              <h3>Content Ownership Mapping</h3>
+              <p>Identified responsible parties for each website section</p>
+            </div>
+          </div>
+
+          <div class="discovery-item">
+            <div class="discovery-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+            </div>
+            <div class="discovery-text">
+              <h3>Feedback Collection</h3>
+              <p>Gathered pain points and challenges from all departments</p>
+            </div>
+          </div>
+
+          <div class="discovery-item">
+            <div class="discovery-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div class="discovery-text">
+              <h3>Customer Service Reports</h3>
+              <p>Analyzed recurring issues from support tickets</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-connector">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+
+    <!-- Phase 2: Insights -->
+    <div class="phase phase-2">
+      <div class="phase-header">
+        <div class="phase-number">2</div>
+        <span>Key Insights: Core Problems Identified</span>
+      </div>
+      <div class="phase-content">
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-icon-wrapper">
+              <svg class="insight-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+              </svg>
+            </div>
+            <h3>Navigation Issues</h3>
+            <p>Difficult browsing & site navigation</p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon-wrapper">
+              <svg class="insight-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+              </svg>
+            </div>
+            <h3>Bilingual Confusion</h3>
+            <p>Content mixing between Arabic & English</p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon-wrapper">
+              <svg class="insight-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+              </svg>
+            </div>
+            <h3>Design Inconsistency</h3>
+            <p>No unified theme across web & mobile</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-connector">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+
+    <!-- Phase 3: Research Methods -->
+    <div class="phase phase-3">
+      <div class="phase-header">
+        <div class="phase-number">3</div>
+        <span>Research Methods Applied</span>
+      </div>
+      <div class="phase-content">
+        <div class="methods-list">
+          <div class="method-item">
+            <div class="method-number">1</div>
+            <svg class="method-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            <div class="method-text">
+              <h3>Information Architecture Analysis</h3>
+              <p>Deep dive into IA and navigation patterns</p>
+            </div>
+          </div>
+
+          <div class="method-item">
+            <div class="method-number">2</div>
+            <svg class="method-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="method-text">
+              <h3>Usability Heuristics Evaluation</h3>
+              <p>Applied Nielsen's 10 principles for assessment</p>
+            </div>
+          </div>
+
+          <div class="method-item">
+            <div class="method-number">3</div>
+            <svg class="method-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            </svg>
+            <div class="method-text">
+              <h3>Design System Audit</h3>
+              <p>Identified visual consistency and design system gaps</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
